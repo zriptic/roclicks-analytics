@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+/*
+ * RoClicks dark theme: deep marine ink surfaces, signal red for actions.
+ */
+:root {
+  --bg: oklch(0.145 0.018 240);
+  --surface: oklch(0.195 0.021 240);
+  --surface-2: oklch(0.245 0.024 240);
+  --line: oklch(0.32 0.024 240);
+  --line-soft: oklch(0.26 0.022 240);
+
+  /* Contrast on --bg: 15.6:1 / 7.9:1 / 4.6:1. Nothing below ink-3 carries text. */
+  --ink: oklch(0.97 0.004 240);
+  --ink-2: oklch(0.78 0.014 240);
+  --ink-3: oklch(0.63 0.018 240);
+
+  /* L is pinned so white button text clears 4.5:1 on --signal (measured 4.66).
+     --signal-hi is the on-dark reading of the same hue: use it for red TEXT,
+     --signal for red SURFACES. */
+  --signal: oklch(0.575 0.216 26);
+  --signal-hi: oklch(0.7 0.19 26);
+  --signal-ink: oklch(0.99 0.01 26);
+  --signal-dim: oklch(0.6 0.216 26 / 0.16);
+
+  --gold: oklch(0.8 0.145 82);
+  --ok: oklch(0.74 0.15 152);
+  --warn: oklch(0.82 0.15 78);
+  --danger: oklch(0.68 0.2 22);
+
+  --radius: 0.625rem;
+
+  /* Semantic stacking order, never arbitrary values. */
+  --z-sticky: 20;
+  --z-overlay: 40;
+  --z-toast: 60;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-signal: var(--signal);
+  --color-signal-hi: var(--signal-hi);
+  --color-signal-ink: var(--signal-ink);
+  --color-gold: var(--gold);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--bg);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal-hi);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/*
+ * A page that opts into filling the viewport (the studio) needs body to have a
+ * definite height, not just a minimum. Otherwise flex-1 distributes free space
+ * but still grows past the fold the moment its content is taller, and the whole
+ * page scrolls instead of the message list.
+ */
+body:has(> [data-fill-viewport]) {
+  height: 100%;
+  overflow: hidden;
+}
+
+@layer components {
+  /*
+   * Display type uses Archivo's width axis rather than a second family. Wide +
+   * heavy is the scoreboard voice; the axis is doing real work.
+   */
+  .display {
+    font-variation-settings: "wdth" 112;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .eyebrow-rank {
+    font-variation-settings: "wdth" 112;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tailwind v4 will not @apply a non-utility class, so the shared shape is
+     declared once across all three selectors rather than composed. */
+  .btn,
+  .btn-primary,
+  .btn-ghost,
+  .btn-quiet {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-[var(--radius)] px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 disabled:cursor-not-allowed disabled:opacity-45;
+    /* 44px minimum for one-handed taps. */
+    min-height: 2.75rem;
+  }
+  .btn-primary {
+    background: var(--signal);
+    color: var(--signal-ink);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--signal-hi);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    border-color: var(--ink-3);
+    color: var(--ink);
+    background: var(--surface-2);
+  }
+  .btn-ghost:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .btn-quiet {
+    color: var(--ink-3);
+    padding-inline: 0.625rem;
+  }
+  .btn-quiet:hover:not(:disabled) {
+    color: var(--ink);
+    background: var(--surface-2);
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+  }
+
+  .input {
+    @apply w-full rounded-[var(--radius)] px-3 py-2.5 text-sm transition-colors outline-none;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .input:hover:not(:disabled) {
+    border-color: var(--ink-3);
+  }
+  .input:focus {
+    border-color: var(--signal);
+    outline: 2px solid var(--signal-dim);
+    outline-offset: 0;
+  }
+  .input:disabled {
+    opacity: 0.5;
+  }
+  /* Placeholder needs the same 4.5:1 as body text, not a muted default. */
+  .input::placeholder {
+    color: var(--ink-3);
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-semibold;
+    color: var(--ink-2);
+    letter-spacing: 0.01em;
+  }
+
+  /* Native buttons default to the arrow cursor, which reads as "not clickable". */
+  button:not(:disabled),
+  summary,
+  [role="radio"]:not(:disabled),
+  [role="menuitem"] {
+    cursor: pointer;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-semibold;
+    background: var(--surface-2);
+    color: var(--ink-2);
+    border: 1px solid var(--line-soft);
+  }
+  .chip-signal {
+    background: var(--signal-dim);
+    border-color: transparent;
+    color: var(--signal-hi);
+  }
+
+  /* The aspect ratio the product exists to fill is the page's geometric unit. */
+  .frame-169 {
+    aspect-ratio: 16 / 9;
+    border-radius: calc(var(--radius) - 2px);
+    border: 1px solid var(--line-soft);
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  .rise {
+    animation: rise 0.7s var(--ease-out) both;
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "roclicks-analytics",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Self-hosted analytics for Roblox games: players, retention, revenue, heatmaps, funnels, remote config and A/B tests.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "worker": "tsx --env-file=.env src/worker/index.ts",
+    "db:migrate": "prisma migrate deploy && prisma generate",
+    "seed": "tsx --env-file=.env scripts/seed.ts",
+    "prune": "tsx --env-file=.env scripts/prune.ts",
+    "test": "tsx tests/experiments.test.mts && tsx tests/ratelimit.test.mts"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "@tailwindcss/postcss": "^4",
+    "dotenv": "^17.4.2",
+    "next": "16.2.12",
+    "node-cron": "^4.6.0",
+    "pg": "^8.22.0",
+    "prisma": "^7.9.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.20.3",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
